@@ -40,7 +40,13 @@ class AsteroidRepository(private val database: AsteroidDatabase) {
 
     suspend fun deletePreviousDayAsteroids() {
         withContext(Dispatchers.IO) {
-            database.asteroidDao.deletePreviousDayAsteroids(getToday())
+            try {
+                database.asteroidDao.deletePreviousDayAsteroids(getToday())
+                Log.d("Delete Asteroids", "Success")
+            } catch (err: Exception) {
+                Log.e("Delete Asteroids", err.message.toString())
+            }
+
         }
     }
 }

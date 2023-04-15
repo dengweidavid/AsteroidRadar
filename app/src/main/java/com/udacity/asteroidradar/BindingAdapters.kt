@@ -18,10 +18,13 @@ fun bindAsteroidStatusImage(imageView: ImageView, isHazardous: Boolean) {
 
 @BindingAdapter("asteroidStatusImage")
 fun bindDetailsStatusImage(imageView: ImageView, isHazardous: Boolean) {
+    val context = imageView.context
     if (isHazardous) {
         imageView.setImageResource(R.drawable.asteroid_hazardous)
+        imageView.contentDescription = context.getString(R.string.potentially_hazardous_asteroid_image)
     } else {
         imageView.setImageResource(R.drawable.asteroid_safe)
+        imageView.contentDescription = context.getString(R.string.not_hazardous_asteroid_image)
     }
 }
 
@@ -43,13 +46,23 @@ fun bindTextViewToDisplayVelocity(textView: TextView, number: Double) {
     textView.text = String.format(context.getString(R.string.km_s_unit_format), number)
 }
 
-@BindingAdapter("pictureUrl")
-fun bindUriToImage(imageView: ImageView, strUrl: String?) {
-    Picasso.with(imageView.context)
-        .load(strUrl)
-        .placeholder(R.drawable.placeholder_picture_of_day)
-        .error(R.drawable.placeholder_picture_of_day)
-        .into(imageView)
+@BindingAdapter("pictureOfDayImage")
+fun bindPictureOfDay(imageView: ImageView, pictureOfDay: PictureOfDay?) {
+    val context = imageView.context
+    if (pictureOfDay != null && pictureOfDay.url.isNotBlank()) {
+        Picasso.with(context)
+            .load(pictureOfDay.url)
+            .placeholder(R.drawable.placeholder_picture_of_day)
+            .error(R.drawable.no_image_available)
+            .into(imageView)
+
+        val contentDescription =
+            String.format(
+                context.getString(R.string.nasa_picture_of_day_content_description_format),
+                pictureOfDay.title
+            )
+        imageView.contentDescription = contentDescription
+    }
 }
 
 @BindingAdapter("listData")

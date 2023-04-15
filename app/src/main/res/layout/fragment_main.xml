@@ -28,9 +28,9 @@
                 android:layout_height="match_parent"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
-                android:contentDescription="@{viewModel.pictureOfDay.title}"
+                android:contentDescription="@string/this_is_nasa_s_picture_of_day_showing_nothing_yet"
                 app:srcCompat="@drawable/placeholder_picture_of_day"
-                app:pictureUrl="@{viewModel.pictureOfDay.url}"/>
+                app:pictureOfDayImage="@{viewModel.pictureOfDay}"/>
 
             <TextView
                 android:id="@+id/textView"
