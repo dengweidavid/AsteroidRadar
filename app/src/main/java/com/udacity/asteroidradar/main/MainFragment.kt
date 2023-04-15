@@ -30,17 +30,17 @@ class MainFragment : Fragment() {
             viewModel.displayAsteroidDetails(it)
         })
 
+        binding.asteroidRecycler.adapter = mainScrollViewAdapter
+
         viewModel.asteroids.observe(viewLifecycleOwner, Observer<List<Asteroid>> { asteroids ->
             asteroids?.apply {
                 mainScrollViewAdapter.submitList(asteroids)
             }
         })
 
-        binding.asteroidRecycler.adapter = mainScrollViewAdapter
-
-        viewModel.navigateToSelectedAsteroid.observe(viewLifecycleOwner, Observer {
-            if (it != null) {
-                this.findNavController().navigate(MainFragmentDirections.actionShowDetail(it))
+        viewModel.navigateToSelectedAsteroid.observe(viewLifecycleOwner, Observer { asteroid ->
+            if (asteroid != null) {
+                this.findNavController().navigate(MainFragmentDirections.actionShowDetail(asteroid))
                 viewModel.displayAsteroidDetailsComplete()
             }
         })
