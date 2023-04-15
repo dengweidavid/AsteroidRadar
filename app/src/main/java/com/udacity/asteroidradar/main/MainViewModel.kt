@@ -5,6 +5,9 @@ import androidx.lifecycle.*
 import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.PictureOfDay
 import com.udacity.asteroidradar.api.AsteroidApi
+import com.udacity.asteroidradar.api.getSeventhDay
+import com.udacity.asteroidradar.api.getToday
+import com.udacity.asteroidradar.database.asDomainModel
 import com.udacity.asteroidradar.database.getDatabase
 import com.udacity.asteroidradar.repository.AsteroidRepository
 import kotlinx.coroutines.launch
@@ -26,7 +29,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             refreshPictureOfDay()
             asteroidRepository.refreshAsteroids()
-            _asteroids.value  = asteroidRepository.allAsteroids
+            onSavedAsteroidsClicked()
         }
     }
 
@@ -47,13 +50,25 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun onViewWeekAsteroidsClicked() {
-        _asteroids.value = asteroidRepository.weekAsteroids
+        viewModelScope.launch {
+            _asteroids.value = Transformations.map(database.asteroidDao.getAsteroidsDate(getToday(), getSeventhDay())) {
+                it.asDomainModel()
+            }
+        }
     }
     fun onTodayAsteroidsClicked() {
-        _asteroids.value  = asteroidRepository.todayAsteroids
+        viewModelScope.launch {
+            _asteroids.value = Transformations.map(database.asteroidDao.getAsteroidsDay(getToday())) {
+                it.asDomainModel()
+            }
+        }
     }
     fun onSavedAsteroidsClicked() {
-        _asteroids.value  = asteroidRepository.allAsteroids
+        viewModelScope.launch {
+            _asteroids.value = Transformations.map(database.asteroidDao.getAsteroids()) {
+                it.asDomainModel()
+            }
+        }
     }
 
     class Factory(val app: Application) : ViewModelProvider.Factory {

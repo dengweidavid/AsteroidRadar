@@ -18,21 +18,6 @@ import java.util.*
 
 class AsteroidRepository(private val database: AsteroidDatabase) {
 
-    val allAsteroids: LiveData<List<Asteroid>> =
-        Transformations.map(database.asteroidDao.getAsteroids()) {
-            it.asDomainModel()
-        }
-
-    val todayAsteroids: LiveData<List<Asteroid>> =
-        Transformations.map(database.asteroidDao.getAsteroidsDay(getToday())) {
-            it.asDomainModel()
-        }
-
-    val weekAsteroids: LiveData<List<Asteroid>> =
-        Transformations.map(database.asteroidDao.getAsteroidsDate(getToday(), getSeventhDay())) {
-            it.asDomainModel()
-        }
-
     suspend fun refreshAsteroids(
         startDate: String = getToday(),
         endDate: String = getSeventhDay()
