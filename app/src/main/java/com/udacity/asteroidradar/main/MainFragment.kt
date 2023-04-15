@@ -32,12 +32,6 @@ class MainFragment : Fragment() {
 
         binding.asteroidRecycler.adapter = mainScrollViewAdapter
 
-        viewModel.asteroids.observe(viewLifecycleOwner, Observer<List<Asteroid>> { asteroids ->
-            asteroids?.apply {
-                mainScrollViewAdapter.submitList(asteroids)
-            }
-        })
-
         viewModel.navigateToSelectedAsteroid.observe(viewLifecycleOwner, Observer { asteroid ->
             if (asteroid != null) {
                 this.findNavController().navigate(MainFragmentDirections.actionShowDetail(asteroid))
@@ -56,6 +50,11 @@ class MainFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.view_week_asteroids_menu -> viewModel.onViewWeekAsteroidsClicked()
+            R.id.view_today_asteroids_menu -> viewModel.onTodayAsteroidsClicked()
+            R.id.view_week_asteroids_menu -> viewModel.onSavedAsteroidsClicked()
+        }
         return true
     }
 }

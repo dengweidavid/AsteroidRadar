@@ -13,12 +13,23 @@ import com.udacity.asteroidradar.database.asDomainModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 class AsteroidRepository(private val database: AsteroidDatabase) {
 
-    val asteroids: LiveData<List<Asteroid>> =
+    val allAsteroids: LiveData<List<Asteroid>> =
         Transformations.map(database.asteroidDao.getAsteroids()) {
+            it.asDomainModel()
+        }
+
+    val todayAsteroids: LiveData<List<Asteroid>> =
+        Transformations.map(database.asteroidDao.getAsteroidsDay(getToday())) {
+            it.asDomainModel()
+        }
+
+    val weekAsteroids: LiveData<List<Asteroid>> =
+        Transformations.map(database.asteroidDao.getAsteroidsDate(getToday(), getSeventhDay())) {
             it.asDomainModel()
         }
 
@@ -46,7 +57,6 @@ class AsteroidRepository(private val database: AsteroidDatabase) {
             } catch (err: Exception) {
                 Log.e("Delete Asteroids", err.message.toString())
             }
-
         }
     }
 }

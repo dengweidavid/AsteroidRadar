@@ -26,10 +26,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             refreshPictureOfDay()
             asteroidRepository.refreshAsteroids()
+            _asteroids.value  = asteroidRepository.allAsteroids
         }
     }
 
-    val asteroids = asteroidRepository.asteroids
+    private val _asteroids = MutableLiveData<LiveData<List<Asteroid>>>()
+    val asteroids: LiveData<LiveData<List<Asteroid>>>
+        get() = _asteroids
 
     private suspend fun refreshPictureOfDay() {
         _pictureOfDay.value = AsteroidApi.retrofitService.getPictureOfDay()
@@ -41,6 +44,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun displayAsteroidDetailsComplete() {
         _navigateToSelectedAsteroid.value = null
+    }
+
+    fun onViewWeekAsteroidsClicked() {
+        _asteroids.value = asteroidRepository.weekAsteroids
+    }
+    fun onTodayAsteroidsClicked() {
+        _asteroids.value  = asteroidRepository.todayAsteroids
+    }
+    fun onSavedAsteroidsClicked() {
+        _asteroids.value  = asteroidRepository.allAsteroids
     }
 
     class Factory(val app: Application) : ViewModelProvider.Factory {
