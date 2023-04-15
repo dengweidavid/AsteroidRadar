@@ -10,7 +10,9 @@ import com.udacity.asteroidradar.api.getToday
 import com.udacity.asteroidradar.database.asDomainModel
 import com.udacity.asteroidradar.database.getDatabase
 import com.udacity.asteroidradar.repository.AsteroidRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -29,7 +31,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             refreshPictureOfDay()
             asteroidRepository.refreshAsteroids()
-            onSavedAsteroidsClicked()
+            loadAllAsteroids()
         }
     }
 
@@ -49,25 +51,37 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         _navigateToSelectedAsteroid.value = null
     }
 
+    private fun loadAllAsteroids() {
+       _asteroids.value = Transformations.map(database.asteroidDao.getAsteroids()) {
+           it.asDomainModel()
+        }
+    }
+
+    private fun loadWeekAsteroids() {
+        _asteroids.value = Transformations.map(database.asteroidDao.getAsteroidsDate(getToday(), getSeventhDay())) {
+            it.asDomainModel()
+        }
+    }
+
+    private fun loadTodayAsteroids() {
+        _asteroids.value = Transformations.map(database.asteroidDao.getAsteroidsDay(getToday())) {
+            it.asDomainModel()
+        }
+    }
+
     fun onViewWeekAsteroidsClicked() {
         viewModelScope.launch {
-            _asteroids.value = Transformations.map(database.asteroidDao.getAsteroidsDate(getToday(), getSeventhDay())) {
-                it.asDomainModel()
-            }
+            loadWeekAsteroids()
         }
     }
-    fun onTodayAsteroidsClicked() {
+    fun onViewTodayAsteroidsClicked() {
         viewModelScope.launch {
-            _asteroids.value = Transformations.map(database.asteroidDao.getAsteroidsDay(getToday())) {
-                it.asDomainModel()
-            }
+            loadTodayAsteroids()
         }
     }
-    fun onSavedAsteroidsClicked() {
+    fun onViewSavedAsteroidsClicked() {
         viewModelScope.launch {
-            _asteroids.value = Transformations.map(database.asteroidDao.getAsteroids()) {
-                it.asDomainModel()
-            }
+            loadAllAsteroids()
         }
     }
 
