@@ -9,6 +9,7 @@ import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.Constants.API_KEY
 import com.udacity.asteroidradar.PictureOfDay
 import com.udacity.asteroidradar.api.AsteroidApi
+import com.udacity.asteroidradar.api.AsteroidService
 import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -31,8 +32,8 @@ class MainViewModel : ViewModel() {
 
     init {
         viewModelScope.launch {
+//            asteroidRepository.refreshAsteroids()
             refreshPictureOfDay()
-            refreshAsteroids()
         }
     }
 
@@ -40,24 +41,12 @@ class MainViewModel : ViewModel() {
         withContext(Dispatchers.IO) {
             try {
                 _pictureOfDay.postValue(
-                    AsteroidApi.retrofitService.getPictureOfDay(API_KEY)
+                    AsteroidApi.retrofitService.getPictureOfDay()
                 )
             } catch (err: Exception) {
-                Log.e("Refresh Picture", err.message.toString())
+                Log.e("Refresh PictureOfDay", err.message.toString())
             }
         }
-    }
-
-    private suspend fun refreshAsteroids() {
-//        withContext(Dispatchers.IO) {
-            try {
-                val asteroids_string = AsteroidApi.retrofitService.getAsteroids(API_KEY)
-                _asteroids.value = parseAsteroidsJsonResult(JSONObject(asteroids_string))
-                Log.d("Refresh Asteroids", "Success")
-            } catch (err: Exception) {
-                Log.e("Refresh Asteroids", err.message.toString())
-            }
-//        }
     }
 
     fun displayAsteroidDetails(asteroid: Asteroid) {
