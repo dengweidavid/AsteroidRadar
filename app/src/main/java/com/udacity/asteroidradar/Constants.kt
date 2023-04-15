@@ -5,5 +5,5 @@ object Constants {
     const val DEFAULT_END_DATE_DAYS = 7
     const val BASE_URL = "https://api.nasa.gov/"
     const val API_KEY = "z9hyQfn4vSlyl1dPNDfHxoMIDG9gaAgKP7Vp6w4E"
-    const val DATABASE_NAME = "asteroids"
+    const val DATABASE_NAME = "asteroids_database"
 }
